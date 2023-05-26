@@ -133,6 +133,8 @@ class VideoProcessor:
 
         # model processing
         im_pil = Image.fromarray(img)
+        st.model.conf = 0.5
+        st.model.iou = 0.5
         results = st.model(im_pil, size=256)
         bbox_img = np.array(results.render()[0])
         # print(results.pandas().xyxy[0]['name'])
