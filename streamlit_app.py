@@ -89,27 +89,27 @@ def imageInput(device, src):
                     st.image(img_, caption='Model Prediction(s)')
 
 
-def videoInput(device, src):
-    uploaded_video = st.file_uploader("Upload Video", type=['mp4', 'mpeg', 'mov'])
-    if uploaded_video != None:
+# def videoInput(device, src):
+#     uploaded_video = st.file_uploader("Upload Video", type=['mp4', 'mpeg', 'mov'])
+#     if uploaded_video != None:
 
-        ts = datetime.timestamp(datetime.now())
-        imgpath = os.path.join('data/uploads', str(ts) + uploaded_video.name)
-        outputpath = os.path.join('data/video_output', os.path.basename(imgpath))
+#         ts = datetime.timestamp(datetime.now())
+#         imgpath = os.path.join('data/uploads', str(ts) + uploaded_video.name)
+#         outputpath = os.path.join('data/video_output', os.path.basename(imgpath))
 
-        with open(imgpath, mode='wb') as f:
-            f.write(uploaded_video.read())  # save video to disk
+#         with open(imgpath, mode='wb') as f:
+#             f.write(uploaded_video.read())  # save video to disk
 
-        st_video = open(imgpath, 'rb')
-        video_bytes = st_video.read()
-        st.video(video_bytes)
-        st.write("Uploaded Video")
-        detect(weights=cfg_model_path, source=imgpath, device=0) if device == 'cuda' else detect(
-            weights=cfg_model_path, source=imgpath, device='cpu')
-        st_video2 = open(outputpath, 'rb')
-        video_bytes2 = st_video2.read()
-        st.video(video_bytes2)
-        st.write("Model Prediction")
+#         st_video = open(imgpath, 'rb')
+#         video_bytes = st_video.read()
+#         st.video(video_bytes)
+#         st.write("Uploaded Video")
+#         detect(weights=cfg_model_path, source=imgpath, device=0) if device == 'cuda' else detect(
+#             weights=cfg_model_path, source=imgpath, device='cpu')
+#         st_video2 = open(outputpath, 'rb')
+#         video_bytes2 = st_video2.read()
+#         st.video(video_bytes2)
+#         st.write("Model Prediction")
 
 
 RTC_CONFIGURATION = RTCConfiguration(
@@ -137,45 +137,9 @@ class VideoProcessor:
         st.model.iou = 0.4
         results = st.model(im_pil, size=256)
         bbox_img = np.array(results.render()[0])
-        # print(results.pandas().xyxy[0]['name'])
         # labels = results.pandas().xyxy[0]["name"]
-#         bboxes = results.pandas().xyxy[0][["xmin", "ymin", "xmax", "ymax"]].values
-
-        # for label, bbox in zip(labels, bboxes):
-        #     xmin, ymin, xmax, ymax = bbox.astype(int)
-        #     cv2.rectangle(bbox_img, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
-        #     cv2.putText(
-        #         bbox_img,
-        #         label,
-        #         (xmin, ymin - 10),
-        #         cv2.FONT_HERSHEY_SIMPLEX,
-        #         0.9,
-        #         (0, 255, 0),
-        #         2,
-        #     )
-
-        # st.image(bbox_img, channels="BGR", use_column_width=True)
-        # detected_labels = labels
-        # self.labels = labels
-        # with self.lock:
-        #     self.labels = labels
-
-#         labels = ["label1", "label2", "label3"]
-
-#         self.labels = labels
 
         return av.VideoFrame.from_ndarray(bbox_img, format="bgr24")
-
-
-# def update_labels(video_processor):
-#     while True:
-#         time.sleep(1)  # Wait for 1 second
-#         with video_processor.lock:
-#             labels = video_processor.labels
-#         if labels:
-#             st.write("Detected Labels:")
-#             for label in labels:
-#                 st.write(label)
 
 
 def main():
@@ -183,7 +147,7 @@ def main():
     st.sidebar.title('⚙️Options')
     datasrc = st.sidebar.radio("Select input source.", ['From test set.', 'Upload your own data.'])
 
-    option = st.sidebar.radio("Select input type.", ['Image', 'Video', 'Webcam Stream'])
+    option = st.sidebar.radio("Select input type.", ['Image', 'Webcam Stream'])
     if torch.cuda.is_available():
         deviceoption = st.sidebar.radio("Select compute Device.", ['cpu', 'cuda'], disabled=False, index=1)
     else:
@@ -195,8 +159,8 @@ def main():
     st.sidebar.markdown("https://github.com/fransachmadhw/yolov5_mobilenetv3s_streamlit")
     if option == "Image":
         imageInput(deviceoption, datasrc)
-    elif option == "Video":
-        videoInput(deviceoption, datasrc)
+    # elif option == "Video":
+    #     videoInput(deviceoption, datasrc)
     elif option == "Webcam Stream":
         # global video_processor
         # video_processor = VideoProcessor()
